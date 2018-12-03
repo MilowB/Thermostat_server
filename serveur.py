@@ -10,11 +10,11 @@ app = Flask(__name__)
 def serveur():
     return "Hello World!"
 
-@app.route("/data/temperature/<string:key>/<string:phrase>", methods=['GET'])
-def getTemperature(key, phrase):
+@app.route("/data/temperature/<string:key>", methods=['GET'])
+def getTemperature(key):
     if not auth(key):
         abort(401)
-    return jsonify({'id': phrase})
+    return jsonify({'temperature': 22.5})
 
 @app.route("/data/planning/<string:key>", methods=['GET'])
 def getPlanning(key):
