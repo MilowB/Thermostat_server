@@ -2,19 +2,21 @@ from flask import Flask, jsonify
 from flask import abort
 from flask_httpauth import HTTPBasicAuth
 from flask import request
+from Thermostat import *
 auth = HTTPBasicAuth()
 
 app = Flask(__name__)
+thermostat = Thermostat()
 
 @app.route("/")
 def serveur():
     return "Hello World!"
 
 @app.route("/data/temperature/<string:key>", methods=['GET'])
-def getTemperature(key):
+def getCurrentTemperature(key):
     if not auth(key):
         abort(401)
-    return jsonify({'temperature': 22.5})
+    return jsonify({'temperature': thermostat.getCurrentTemperature()})
 
 @app.route("/data/planning/<string:key>", methods=['GET'])
 def getPlanning(key):

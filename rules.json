@@ -1,0 +1,86 @@
+[
+    {"lundi":
+        [
+            {
+                "heure": 0.0,
+                "temp_int": 21.0
+            },
+            {
+                "heure": 1.0,
+                "temp_int": 21.5
+            }
+        ]
+    },
+    {"mardi":
+        [
+            {
+                "heure": 0.0,
+                "temp_int": 21.0
+            },
+            {
+                "heure": 1.0,
+                "temp_int": 21.5
+            }
+        ]
+    },
+    {"mercredi":
+        [
+            {
+                "heure": 0.0,
+                "temp_int": 21.0
+            },
+            {
+                "heure": 1.0,
+                "temp_int": 21.5
+            }
+        ]
+    },
+    {"jeudi":
+        [
+            {
+                "heure": 0.0,
+                "temp_int": 21.0
+            },
+            {
+                "heure": 1.0,
+                "temp_int": 21.5
+            }
+        ]
+    },
+    {"vendredi":
+        [
+            {
+                "heure": 0.0,
+                "temp_int": 21.0
+            },
+            {
+                "heure": 1.0,
+                "temp_int": 21.5
+            }
+        ]
+    },
+    {"samedi":
+        [
+            {
+                "heure": 0.0,
+                "temp_int": 21.0
+            },
+            {
+                "heure": 1.0,
+                "temp_int": 21.5
+            }
+        ]
+    },
+    {"dimanche":
+        [
+            {
+                "heure": 0.0,
+                "temp_int": 21.0
+            },
+            {
+                "heure": 1.0,
+                "temp_int": 21.5
+            }
+        ]
+    }
+]
