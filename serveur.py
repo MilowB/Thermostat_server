@@ -8,7 +8,6 @@ import json
 sys.path.insert(0, '/home/mickael/Projets/Thermostat/Intelligence/')
 
 from Thermostat import *
-from Simulateur import *
 auth = HTTPBasicAuth()
 
 app = Flask(__name__)
@@ -99,3 +98,6 @@ def auth(key):
     if file.read() == key:
         return True
     return False
+
+if __name__ == '__main__':
+   app.run(host="0.0.0.0")

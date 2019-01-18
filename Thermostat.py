@@ -17,7 +17,7 @@ class Thermostat():
         self.on = working
 
     #TODO: behave depending on rules.json
-    def getRequireTemp(self, day, hour):
+    def getRequireTemp(self, hour):
         now = datetime.datetime.now()
         day = "lundi" #now.day
         hour = hour #now.hour
