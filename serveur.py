@@ -25,7 +25,9 @@ def ping():
 def getCurrentTemperature(key):
     if not auth(key):
         abort(401)
-    return jsonify('{"status": "success", "temperature":' + str(thermostat.getCurrentTemperature()) + '}')
+    contenuFich = lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
+    temperature = recupTemp (contenuFich)
+    return jsonify('{"status": "success", "temperature":' + str(temperature) + '}')
 
 @app.route("/data/planning/<string:key>", methods=['GET'])
 def getPlanning(key):
@@ -98,6 +100,25 @@ def auth(key):
     if file.read() == key:
         return True
     return False
+
+def lireFichier (emplacement) :
+    # Ouverture du fichier contenant la temperature
+    fichTemp = open(emplacement)
+    # Lecture du fichier
+    contenu = fichTemp.read()
+    # Fermeture du fichier apres qu'il ai ete lu
+    fichTemp.close()
+    return contenu
+
+def recupTemp (contenuFich) :
+    # Supprimer la premiere ligne qui est inutile
+    secondeLigne = contenuFich.split("\n")[1]
+    temperatureData = secondeLigne.split(" ")[9]
+    # Supprimer le "t="
+    temperature = float(temperatureData[2:])
+    # Mettre un chiffre apres la virgule
+    temperature = temperature / 1000
+    return temperature
 
 if __name__ == '__main__':
    app.run(host="0.0.0.0")
