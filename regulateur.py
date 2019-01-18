@@ -11,8 +11,7 @@ def main():
             GPIO.setup(17, GPIO.OUT, initial=GPIO.LOW)
         else:
             GPIO.setup(17, GPIO.OUT, initial=GPIO.HIGH)
-
-        time.sleep(2)
+        time.sleep(120)
 
 if __name__ == '__main__':
    main()

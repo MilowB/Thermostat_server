@@ -22,7 +22,6 @@ class Thermostat():
     #TODO: behave depending on rules.json
     def _getRequireTemp(self):
         locale.setlocale(locale.LC_TIME,'')
-        print(time.strftime('%A %d/%m/%Y %H:%M:%S'))
         day = time.strftime('%A')
         hour = time.strftime('%H')
         minute = time.strftime('%M')
@@ -43,7 +42,6 @@ class Thermostat():
                         break
             else:
                 print("[Thermostat][behave] Error, day not found")
-        print("Heure : ", argHour, ", Temperature : ", tempToSet)
         return tempToSet
 
     def needHeating(self):
@@ -63,7 +61,6 @@ class Thermostat():
     def updateData(self):
         contenuFich = self._lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
         temperature = self._recupTemp(contenuFich)
-        print("Current temp : ", temperature) #debug
         self.temperature = temperature
 
     def _lireFichier(self, emplacement) :
