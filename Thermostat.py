@@ -2,6 +2,7 @@ import datetime
 import locale
 import time
 import json
+import urllib.request
 
 class Thermostat():
     def __init__(self):
@@ -9,6 +10,7 @@ class Thermostat():
         self.upper = False
         self.goal = 22.0
         self.temperature = 21.5
+        self.csv_data = []
 
     def setTemperature(self, temp):
         self.goal = temp
@@ -23,9 +25,7 @@ class Thermostat():
     def _getRequireTemp(self):
         locale.setlocale(locale.LC_TIME,'')
         day = time.strftime('%A')
-        hour = time.strftime('%H')
-        minute = time.strftime('%M')
-        hour = int(hour) + int(minute) / 100
+        hour = self._getHour()
         tempToSet = 0
         #read rules
         with open('rules.json', 'r') as outfile:
@@ -61,7 +61,18 @@ class Thermostat():
     def updateData(self):
         contenuFich = self._lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
         temperature = self._recupTemp(contenuFich)
+        # Update temperature
         self.temperature = temperature
+        # Update data to write into the CSV  
+        exterior_temp = self._getExteriorTemp()
+        self.csv_data.append([self._getHour(), self.temperature, exterior_temp])
+
+    def saveData(self):
+        # Save data for history
+        with open('history.csv', 'r') as outfile:
+            print("yeap !")
+            #TODO in a csv
+            
 
     def _lireFichier(self, emplacement) :
         # Ouverture du fichier contenant la temperature
@@ -81,4 +92,30 @@ class Thermostat():
         # Mettre un chiffre apres la virgule
         temperature = temperature / 1000
         return temperature
+
+    def _getHour(self):
+        hour = time.strftime('%H')
+        minute = time.strftime('%M')
+        hour = int(hour) + int(minute) / 100
+        return hour
+
+    def _getExteriorTemp(self):
+        # Coordinates of Valence, FR
+        long = 4.89
+        lat = 44.93
+        # Get the API key from the config file
+        with open("config.txt") as f:
+            content = f.readlines()
+        content = [x.strip() for x in content] 
+        api_key = content[1].split(" ")[1]
+        address = "https://samples.openweathermap.org/data/2.5/weather?lat=" + str(lat) + "&lon=" + str(long) + "&appid=" + api_key
+        print(address)
+        contents = urllib.request.urlopen(address).read()
+        my_json = contents.decode('utf8').replace("'", '"')
+        # Load the JSON to a Python list & dump it back out as formatted JSON
+        data = json.loads(my_json)
+        s = json.dumps(data, indent=4, sort_keys=True)
+        return data["main"]["temp"] - 273.15
+
+
 

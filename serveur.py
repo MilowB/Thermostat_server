@@ -2,16 +2,14 @@ from flask import Flask, jsonify
 from flask import abort
 from flask_httpauth import HTTPBasicAuth
 from flask import request
-import sys
 import json
 
-sys.path.insert(0, '/home/mickael/Projets/Thermostat/Intelligence/')
-
-from Thermostat import *
 auth = HTTPBasicAuth()
 
 app = Flask(__name__)
 thermostat = Thermostat()
+
+#TODO mutex pour rules.json
 
 @app.route("/")
 def serveur():
@@ -79,7 +77,7 @@ def setCurrentTemperature(key):
         abort(401)
     elif not "temperature" in request.json:
         return jsonify('{"status": "error", "description": "Field "temperature" missing"}')
-    thermostat.setTemperature(request.json["temperature"])
+    #TODO
     return jsonify('{"status": "success"}')
 
 '''
@@ -92,12 +90,15 @@ def setWorking(key):
         abort(401)
     elif not "working" in request.json:
         return jsonify('{"status": "error", "description": "Field "working" missing"}')
-    thermostat.setWorking(request.json["working"])
+    #TODO On/Off thermostat
     return jsonify('{"status": "success"}')
 
 def auth(key):
-    file = open("config.txt", "r") 
-    if file.read() == key:
+    with open("config.txt") as f:
+        content = f.readlines()
+    # you may also want to remove whitespace characters like `\n` at the end of each line
+    content = [x.strip() for x in content] 
+    if content[0].split(" ")[1] == key:
         return True
     return False
 
