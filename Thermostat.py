@@ -69,9 +69,9 @@ class Thermostat():
 
     def saveData(self):
         # Save data for history
-        with open('history.csv', 'r') as outfile:
-            print("yeap !")
-            #TODO in a csv
+        with open('history.csv', 'a') as outfile:
+            for csv in self.csv_data:
+                outfile.write(csv[0] + " " + csv[1] + " " + csv[2])
             
 
     def _lireFichier(self, emplacement) :

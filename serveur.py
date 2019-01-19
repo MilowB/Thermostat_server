@@ -9,8 +9,6 @@ auth = HTTPBasicAuth()
 app = Flask(__name__)
 thermostat = Thermostat()
 
-#TODO mutex pour rules.json
-
 @app.route("/")
 def serveur():
     return "Server On !"
@@ -32,12 +30,16 @@ def getPlanning(key):
     if not auth(key):
         abort(401)
     with open('rules.json', 'r') as outfile:
-        jsonread = json.load(outfile)
-        arr = str(jsonread).split("\"")
         tostring = ""
-        for a in arr:
-            tostring += "\"" + a
-        tostring += "\""
+        try:
+            jsonread = json.load(outfile)
+            arr = str(jsonread).split("\"")
+            tostring = ""
+            for a in arr:
+                tostring += "\"" + a
+            tostring += "\""
+        except :
+            print("[Serveur][getPlanning] Erreur : Lecture du fichier impossible (probablement une écriture simultanée)")
         return jsonify('{"status": "success", "data": ' + tostring + '}')
     return jsonify('{"status": "error", "description": "Unable to get rules"}')
 
@@ -64,7 +66,10 @@ def setTemperatureRules(key):
     elif not "rules" in request.json:
         return jsonify('{"status": "error", "description": "Field "rules" missing"}')
     with open('rules.json', 'w') as outfile:
-        json.dump(request.json["rules"], outfile)
+        try:
+            json.dump(request.json["rules"], outfile)
+        except :
+            print("[Serveur][setTempratureRules] Erreur : Ecriture du fichier impossible")
     return jsonify('{"status": "success"}')
 
 '''
