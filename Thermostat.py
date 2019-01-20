@@ -77,7 +77,7 @@ class Thermostat():
         # Save data for history
         with open('history.csv', 'a') as outfile:
             for csv in self.csv_data:
-                outfile.write(str(csv[0]) + " " + str(csv[1]) + " " + str(csv[2])) + "\n"
+                outfile.write(str(csv[0]) + " " + str(csv[1]) + " " + str(csv[2]) + "\n")
             
 
     def _lireFichier(self, emplacement) :
