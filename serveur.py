@@ -132,7 +132,7 @@ def recupTemp (contenuFich) :
 if __name__ == '__main__':
     app.run(host="0.0.0.0")
     GPIO.setmode(GPIO.BCM)
-    time_sleep = 5 * 60
+    time_sleep = 2 #5 * 60
     cpt = 0
     while True:
         thermostat.updateData()
