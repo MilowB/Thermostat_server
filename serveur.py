@@ -132,8 +132,9 @@ def recupTemp (contenuFich) :
     return temperature
 
 if __name__ == '__main__':
-    print("Server is running") #debug
-    app.run(host="0.0.0.0")
     # Run the regulator
     regulateur = Regulateur(thermostat)
     regulateur.start()
+    # Run the server
+    print("Server is running") #debug
+    app.run(host="0.0.0.0")
