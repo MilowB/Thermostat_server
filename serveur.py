@@ -73,8 +73,10 @@ def setTemperatureRules(key):
     with open('rules.json', 'w') as outfile:
         try:
             json.dump(request.json["rules"], outfile)
+            print("request.json[rules] : ", request.json["rules"]) #debug
         except :
             print("[Serveur][setTempratureRules] Erreur : Ecriture du fichier impossible")
+            return jsonify('{"status": "error", "description": "Internal error during the process, please try again later"}')
     return jsonify('{"status": "success"}')
 
 '''
