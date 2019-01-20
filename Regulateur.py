@@ -15,8 +15,8 @@ class Regulateur(Thread):
         time_sleep = 5 #5 * 60
         cpt = 0
         while True:
-            thermostat.updateData()
-            if thermostat.needHeating():
+            self.thermostat.updateData()
+            if self.thermostat.needHeating():
                 GPIO.setup(17, GPIO.OUT, initial=GPIO.LOW)
             else:
                 GPIO.setup(17, GPIO.OUT, initial=GPIO.HIGH)
@@ -24,5 +24,5 @@ class Regulateur(Thread):
             time.sleep(time_sleep)
             # Write data every hours to prevent the degradation of the SD card
             if cpt % 12 == 0:
-                thermostat.saveData()
+                self.thermostat.saveData()
             cpt += 1
