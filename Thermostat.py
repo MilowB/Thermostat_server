@@ -45,6 +45,7 @@ class Thermostat():
                         break
             else:
                 print("[Thermostat][behave] Error, day not found")
+        print(tempToSet, "a l'heure : ", argHour)
         return tempToSet
 
     def needHeating(self):
