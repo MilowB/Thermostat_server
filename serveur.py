@@ -98,7 +98,7 @@ def setWorking(key):
         abort(401)
     elif not "working" in request.json:
         return jsonify('{"status": "error", "description": "Field "working" missing"}')
-    #TODO On/Off thermostat
+    thermostat.setTemperature(request.json["working"])
     return jsonify('{"status": "success"}')
 
 def auth(key):
