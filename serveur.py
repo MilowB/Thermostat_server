@@ -56,7 +56,7 @@ def getHistory(key):
 def getWorking(key):
     if not auth(key):
         abort(401)
-    return jsonify('{"status": "success", "working":'  + thermostat.getWorking() + '}')
+    return jsonify('{"status": "success", "working":'  + str(thermostat.getWorking()) + '}')
 
 '''
 key : authentification key to access the API
