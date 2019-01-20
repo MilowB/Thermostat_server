@@ -45,15 +45,12 @@ class Thermostat():
                         break
             else:
                 print("[Thermostat][behave] Error, day not found")
-        print(tempToSet, "a l'heure : ", argHour, " au jour : ", day)
         return tempToSet
 
     def needHeating(self):
         res = False
-        print("[needHeating] self.on: ", self.on) #debug
         if self.on:
             temp_required = self._getRequireTemp()
-            print("[needHeating] temp_required : ", temp_required) #debug
             if self.temperature > temp_required:
                 self.upper = True
             if self.temperature < temp_required and not self.upper:
