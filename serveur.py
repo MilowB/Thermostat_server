@@ -2,12 +2,15 @@ from flask import Flask, jsonify
 from flask import abort
 from flask_httpauth import HTTPBasicAuth
 from flask import request
+import time
+import RPi.GPIO as GPIO
+from Thermostat import *
 import json
 
 auth = HTTPBasicAuth()
+thermostat = Thermostat()
 
 app = Flask(__name__)
-thermostat = Thermostat()
 
 @app.route("/")
 def serveur():
@@ -53,7 +56,7 @@ def getHistory(key):
 def getWorking(key):
     if not auth(key):
         abort(401)
-    return jsonify('{"status": "success", "working": "true"}')
+    return jsonify('{"status": "success", "working":'  + thermostat.getWorking() + '}')
 
 '''
 key : authentification key to access the API
@@ -102,7 +105,7 @@ def auth(key):
     with open("config.txt") as f:
         content = f.readlines()
     # you may also want to remove whitespace characters like `\n` at the end of each line
-    content = [x.strip() for x in content] 
+    content = [x.strip() for x in content]
     if content[0].split(" ")[1] == key:
         return True
     return False
@@ -127,4 +130,19 @@ def recupTemp (contenuFich) :
     return temperature
 
 if __name__ == '__main__':
-   app.run(host="0.0.0.0")
+    app.run(host="0.0.0.0")
+    GPIO.setmode(GPIO.BCM)
+    time_sleep = 5 * 60
+    cpt = 0
+    while True:
+        thermostat.updateData()
+        if thermostat.needHeating():
+            GPIO.setup(17, GPIO.OUT, initial=GPIO.LOW)
+        else:
+            GPIO.setup(17, GPIO.OUT, initial=GPIO.HIGH)
+        # Would be better to the SD card to check every 5 * 60 seconds
+        time.sleep(time_sleep)
+        # Write data every hours to prevent the degradation of the SD card
+        if cpt % 12 == 0:
+            thermostat.saveData()
+        cpt += 1

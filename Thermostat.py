@@ -21,6 +21,9 @@ class Thermostat():
     def setWorking(self, working):
         self.on = working
 
+    def getWorking(self):
+        self.on = working
+
     #TODO: behave depending on rules.json
     def _getRequireTemp(self):
         locale.setlocale(locale.LC_TIME,'')
@@ -46,16 +49,17 @@ class Thermostat():
 
     def needHeating(self):
         res = False
-        temp_required = self._getRequireTemp()
-        if self.temperature > temp_required:
-            self.upper = True
-        if self.temperature < temp_required and not self.upper:
-            res = True
-        elif self.temperature >= temp_required - 0.5 and self.temperature < temp_required and self.upper:
-            res = False
-        elif self.temperature < temp_required - 0.5:
-            res = True
-            self.upper = False
+        if self.on:
+            temp_required = self._getRequireTemp()
+            if self.temperature > temp_required:
+                self.upper = True
+            if self.temperature < temp_required and not self.upper:
+                res = True
+            elif self.temperature >= temp_required - 0.5 and self.temperature < temp_required and self.upper:
+                res = False
+            elif self.temperature < temp_required - 0.5:
+                res = True
+                self.upper = False
         return res
 
     def updateData(self):
@@ -71,7 +75,7 @@ class Thermostat():
         # Save data for history
         with open('history.csv', 'a') as outfile:
             for csv in self.csv_data:
-                outfile.write(csv[0] + " " + csv[1] + " " + csv[2])
+                outfile.write(str(csv[0]) + " " + str(csv[1]) + " " + str(csv[2])) + "\n"
             
 
     def _lireFichier(self, emplacement) :
@@ -106,10 +110,9 @@ class Thermostat():
         # Get the API key from the config file
         with open("config.txt") as f:
             content = f.readlines()
-        content = [x.strip() for x in content] 
+        content = [x.strip() for x in content]
         api_key = content[1].split(" ")[1]
-        address = "https://samples.openweathermap.org/data/2.5/weather?lat=" + str(lat) + "&lon=" + str(long) + "&appid=" + api_key
-        print(address)
+        address = "http://api.openweathermap.org/data/2.5/weather?lat=" + str(lat) + "&lon=" + str(long) + "&appid=" + api_key
         contents = urllib.request.urlopen(address).read()
         my_json = contents.decode('utf8').replace("'", '"')
         # Load the JSON to a Python list & dump it back out as formatted JSON
