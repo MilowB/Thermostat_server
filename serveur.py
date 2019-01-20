@@ -6,7 +6,7 @@ from flask import request
 import time
 import RPi.GPIO as GPIO
 from Thermostat import *
-from regulateur import *
+from Regulateur import *
 import json
 
 auth = HTTPBasicAuth()
