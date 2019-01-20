@@ -22,7 +22,7 @@ class Thermostat():
         self.on = working
 
     def getWorking(self):
-        self.on = working
+        return self.on
 
     #TODO: behave depending on rules.json
     def _getRequireTemp(self):
