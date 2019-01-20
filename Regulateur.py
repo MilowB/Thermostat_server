@@ -1,5 +1,6 @@
 from threading import Thread
 import RPi.GPIO as GPIO
+import time
 
 class Regulateur(Thread):
 
