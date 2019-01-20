@@ -1,10 +1,12 @@
 from flask import Flask, jsonify
 from flask import abort
 from flask_httpauth import HTTPBasicAuth
+from threading import Thread
 from flask import request
 import time
 import RPi.GPIO as GPIO
 from Thermostat import *
+from regulateur import *
 import json
 
 auth = HTTPBasicAuth()
@@ -130,21 +132,8 @@ def recupTemp (contenuFich) :
     return temperature
 
 if __name__ == '__main__':
-    print("Test 1")
+    print("Server is running") #debug
     app.run(host="0.0.0.0")
-    print("Test 2")
-    GPIO.setmode(GPIO.BCM)
-    time_sleep = 2 #5 * 60
-    cpt = 0
-    while True:
-        thermostat.updateData()
-        if thermostat.needHeating():
-            GPIO.setup(17, GPIO.OUT, initial=GPIO.LOW)
-        else:
-            GPIO.setup(17, GPIO.OUT, initial=GPIO.HIGH)
-        # Would be better to the SD card to check every 5 * 60 seconds
-        time.sleep(time_sleep)
-        # Write data every hours to prevent the degradation of the SD card
-        if cpt % 12 == 0:
-            thermostat.saveData()
-        cpt += 1
+    # Run the regulator
+    regulateur = Regulateur(thermostat)
+    regulateur.start()
