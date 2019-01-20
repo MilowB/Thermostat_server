@@ -130,7 +130,9 @@ def recupTemp (contenuFich) :
     return temperature
 
 if __name__ == '__main__':
+    print("Test 1")
     app.run(host="0.0.0.0")
+    print("Test 2")
     GPIO.setmode(GPIO.BCM)
     time_sleep = 2 #5 * 60
     cpt = 0
