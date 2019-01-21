@@ -7,6 +7,7 @@ import urllib.request
 class Thermostat():
     def __init__(self):
         self.on = True
+        self.heating = False
         self.upper = False
         self.goal = 22.0
         self.temperature = 21.5
@@ -69,13 +70,14 @@ class Thermostat():
         self.temperature = temperature
         # Update data to write into the CSV  
         exterior_temp = self._getExteriorTemp()
-        self.csv_data.append([self._getHour(), self.temperature, exterior_temp])
+        self.csv_data.append([self._getHour(), self.temperature, exterior_temp, self.heating])
 
     def saveData(self):
         # Save data for history
         with open('history.csv', 'a') as outfile:
             for csv in self.csv_data:
-                outfile.write(str(csv[0]) + " " + str(csv[1]) + " " + str(csv[2]) + "\n")
+                outfile.write(str(csv[0]) + " " + str(csv[1]) + " " + str(csv[2]) + str(csv[3]) + "\n")
+        self.csv_data = []
             
 
     def _lireFichier(self, emplacement) :
