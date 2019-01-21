@@ -13,7 +13,7 @@ class Regulateur(Thread):
     def run(self):
         print("Thread Regulator is running") #debug
         GPIO.setmode(GPIO.BCM)
-        time_sleep = 30 #5 * 60
+        time_sleep = 4 * 60
         cpt = 0
         while True:
             self.thermostat.updateData()
