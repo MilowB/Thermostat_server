@@ -1,4 +1,16 @@
+What is it ?
+------------
+
+Who has never dream to manage himself his heating system ? Right, the most of people...
+This repository is the server side of a heating system management. It is composed with a RESTful API build with Flask. The API allows to get the current temperature, shutdown or launch the heating system and schedule hour by hour every day of the week the temperature of your home.
+
+How to run ?
+------------
+
 python3 serveur.py
 
-Tester avec CURL :
-curl -i -H "Content-Type: application/json" -X PUT -d '{"temperature": 22.15}' http://localhost:5000/manage/currentTemperature/kangourou
+How to test ?
+-------------
+
+Test with Curl :
+curl -i -H "Content-Type: application/json" -X PUT -d '{"temperature": 22.15}' http://localhost:5000/manage/currentTemperature/key
