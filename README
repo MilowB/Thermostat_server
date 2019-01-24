@@ -14,3 +14,14 @@ How to test ?
 
 Test with Curl :
 curl -i -H "Content-Type: application/json" -X PUT -d '{"temperature": 22.15}' http://localhost:5000/manage/currentTemperature/key
+
+Is it working ?
+---------------
+
+Yes, you can download this repo and run the server on your machine.
+Also, you should notice it is not the final version.
+
+Where is the documentation ?
+----------------------------
+
+Actually... In my mind... sorry, it is coming soon :)
