@@ -4,28 +4,66 @@ import time
 import json
 import urllib.request
 
+# Thermostat is the temperature regulator interacting with the API
 class Thermostat():
+
     def __init__(self):
-        self.on = True
+        ## public attribute ##
         self.heating = False
-        self.upper = False
-        self.goal = 22.0
-        self.temperature = 21.5
-        self.csv_data = []
+        ## private attributes ##
+        self._on = True
+        self._upper = False
+        self._goal = 22.0
+        self._temperature = 21.5
+        self._csv_data = []
 
-    def setTemperature(self, temp):
-        self.goal = temp
+    ########################## PUBLIC METHODS ##########################
 
-    def getCurrentTemperature(self):
-        return self.temperature
+    def set_temperature(self, temp):
+        self._goal = temp
+
+    def getCurrent_temperature(self):
+        return self._temperature
 
     def setWorking(self, working):
-        self.on = working
+        self._on = working
 
     def getWorking(self):
-        return self.on
+        return self._on
 
-    #TODO: behave depending on rules.json
+    def needHeating(self):
+        res = False
+        if self._on:
+            temp_required = self._getRequireTemp()
+            if self._temperature > temp_required:
+                self._upper = True
+            if self._temperature < temp_required and not self._upper:
+                res = True
+            elif self._temperature >= temp_required - 0.5 and self._temperature < temp_required and self._upper:
+                res = False
+            elif self._temperature < temp_required - 0.5:
+                res = True
+                self._upper = False
+        return res
+
+    def updateData(self):
+        contenuFich = self._lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
+        _temperature = self._recupTemp(contenuFich)
+        # Update _temperature
+        self._temperature = _temperature
+        # Update data to write into the CSV  
+        exterior_temp = self._getExteriorTemp()
+        self._csv_data.append([self._getHour(), self._temperature, exterior_temp, self.heating])
+
+    def saveData(self):
+        # Save data for history
+        with open('history.csv', 'a') as outfile:
+            for csv in self._csv_data:
+                outfile.write(str(csv[0]) + " " + str(csv[1]) + " " + str(csv[2]) + str(csv[3]) + "\n")
+        self._csv_data = []
+            
+    ########################## PRIVATE METHODS ##########################
+
     def _getRequireTemp(self):
         locale.setlocale(locale.LC_TIME,'')
         day = time.strftime('%A')
@@ -40,7 +78,7 @@ class Thermostat():
                 #read hour
                 for r in rule:
                     if hour >= r["hour"]:
-                        tempToSet = r["temperature"]
+                        tempToSet = r["_temperature"]
                         argHour = r["hour"]
                     else:
                         break
@@ -48,40 +86,8 @@ class Thermostat():
                 print("[Thermostat][behave] Error, day not found")
         return tempToSet
 
-    def needHeating(self):
-        res = False
-        if self.on:
-            temp_required = self._getRequireTemp()
-            if self.temperature > temp_required:
-                self.upper = True
-            if self.temperature < temp_required and not self.upper:
-                res = True
-            elif self.temperature >= temp_required - 0.5 and self.temperature < temp_required and self.upper:
-                res = False
-            elif self.temperature < temp_required - 0.5:
-                res = True
-                self.upper = False
-        return res
-
-    def updateData(self):
-        contenuFich = self._lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
-        temperature = self._recupTemp(contenuFich)
-        # Update temperature
-        self.temperature = temperature
-        # Update data to write into the CSV  
-        exterior_temp = self._getExteriorTemp()
-        self.csv_data.append([self._getHour(), self.temperature, exterior_temp, self.heating])
-
-    def saveData(self):
-        # Save data for history
-        with open('history.csv', 'a') as outfile:
-            for csv in self.csv_data:
-                outfile.write(str(csv[0]) + " " + str(csv[1]) + " " + str(csv[2]) + str(csv[3]) + "\n")
-        self.csv_data = []
-            
-
     def _lireFichier(self, emplacement) :
-        # Ouverture du fichier contenant la temperature
+        # Ouverture du fichier contenant la _temperature
         fichTemp = open(emplacement)
         # Lecture du fichier
         contenu = fichTemp.read()
@@ -92,12 +98,12 @@ class Thermostat():
     def _recupTemp(self, contenuFich) :
         # Supprimer la premiere ligne qui est inutile
         secondeLigne = contenuFich.split("\n")[1]
-        temperatureData = secondeLigne.split(" ")[9]
+        _temperatureData = secondeLigne.split(" ")[9]
         # Supprimer le "t="
-        temperature = float(temperatureData[2:])
+        _temperature = float(_temperatureData[2:])
         # Mettre un chiffre apres la virgule
-        temperature = temperature / 1000
-        return temperature
+        _temperature = _temperature / 1000
+        return _temperature
 
     def _getHour(self):
         hour = time.strftime('%H')

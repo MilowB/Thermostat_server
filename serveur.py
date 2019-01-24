@@ -18,8 +18,10 @@ app = Flask(__name__)
 def serveur():
     return "Server On !"
 
-@app.route("/testPing", methods=['GET'])
-def ping():
+@app.route("/testPing/<string:key>", methods=['GET'])
+def ping(key):
+    if not auth(key):
+        abort(401)
     return jsonify('{"status": "success"}')
 
 @app.route("/data/temperature/<string:key>", methods=['GET'])
@@ -28,7 +30,7 @@ def getCurrentTemperature(key):
         abort(401)
     contenuFich = lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
     temperature = recupTemp (contenuFich)
-    return jsonify('{"status": "success", "temperature":' + str(temperature) + '}')
+    return jsonify('{"status": "success", "temperature":' + str(temperature) + ', "heating": ' + str(thermostat.heating) + '}')
 
 @app.route("/data/planning/<string:key>", methods=['GET'])
 def getPlanning(key):
