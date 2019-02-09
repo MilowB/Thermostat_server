@@ -14,16 +14,24 @@ thermostat = Thermostat()
 
 app = Flask(__name__)
 
+########################## API ENDPOINTS ##########################
+
 @app.route("/")
 def serveur():
     return "Server On !"
 
+'''
+key : authentification key to access the API
+'''
 @app.route("/testPing/<string:key>", methods=['GET'])
 def ping(key):
     if not auth(key):
         abort(401)
     return jsonify('{"status": "success"}')
 
+'''
+key : authentification key to access the API
+'''
 @app.route("/data/temperature/<string:key>", methods=['GET'])
 def getCurrentTemperature(key):
     if not auth(key):
@@ -32,6 +40,9 @@ def getCurrentTemperature(key):
     temperature = recupTemp (contenuFich)
     return jsonify('{"status": "success", "temperature":' + str(temperature) + ', "heating": ' + str(thermostat.heating) + '}')
 
+'''
+key : authentification key to access the API
+'''
 @app.route("/data/planning/<string:key>", methods=['GET'])
 def getPlanning(key):
     if not auth(key):
@@ -50,6 +61,10 @@ def getPlanning(key):
         return jsonify('{"status": "success", "data": ' + tostring + '}')
     return jsonify('{"status": "error", "description": "Unable to get rules"}')
 
+'''
+TODO: Get the history of inside/outside temperatures depending on time
+key : authentification key to access the API
+'''
 @app.route("/data/history/<string:key>", methods=['GET'])
 def getHistory(key):
     if not auth(key):
@@ -81,6 +96,7 @@ def setTemperatureRules(key):
     return jsonify('{"status": "success"}')
 
 '''
+TODO: not working yet /!\
 key : authentification key to access the API
 PUT - temperature : temperature to set
 '''
@@ -105,6 +121,10 @@ def setWorking(key):
         return jsonify('{"status": "error", "description": "Field "working" missing"}')
     thermostat.setWorking(request.json["working"])
     return jsonify('{"status": "success"}')
+
+
+
+########################## SOME USEFUL FUNCTIONS ##########################
 
 def auth(key):
     with open("config.txt") as f:
