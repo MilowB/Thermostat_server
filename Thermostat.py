@@ -78,7 +78,7 @@ class Thermostat():
                 #read hour
                 for r in rule:
                     if hour >= r["hour"]:
-                        tempToSet = r["_temperature"]
+                        tempToSet = r["temperature"]
                         argHour = r["hour"]
                     else:
                         break
