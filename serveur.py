@@ -69,7 +69,7 @@ def getPlanning(key):
                 tostring += "\"" + a
             tostring += "\""
         except :
-            print "[Serveur][getPlanning] Erreur : Lecture du fichier impossible (probablement une écriture simultanée)"
+            print("[Serveur][getPlanning] Erreur : Lecture du fichier impossible (probablement une écriture simultanée)")
         return jsonify('{"status": "success", "data": ' + tostring + '}')
     return jsonify('{"status": "error", "description": "Unable to get rules"}')
 
@@ -103,7 +103,7 @@ def setTemperatureRules(key):
         try:
             json.dump(request.json["rules"], outfile)
         except :
-            print "[Serveur][setTempratureRules] Erreur : Ecriture du fichier impossible"
+            print("[Serveur][setTempratureRules] Erreur : Ecriture du fichier impossible")
             return jsonify('{"status": "error", "description": "Internal error during the process, please try again later"}')
     return jsonify('{"status": "success"}')
 
@@ -170,5 +170,5 @@ if __name__ == '__main__':
     regulateur = Regulateur(thermostat)
     regulateur.start()
     # Run the server
-    print "Server is running" #debug
+    print("Server is running") #debug
     app.run(host="0.0.0.0")
