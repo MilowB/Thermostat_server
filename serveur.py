@@ -50,8 +50,7 @@ def getState(key):
         abort(401)
     contenuFich = lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
     temperature = recupTemp (contenuFich)
-    return jsonify('{"status": "success", "temperature": ' + str(temperature) + ', "heating": "' + str(thermostat.heating) + 
-        '", "modifier": ' + str(thermostat.getCurr_required_temp_modifier()) +  "}')
+    return jsonify('{"status": "success", "temperature": ' + str(temperature) + ', "heating": "' + str(thermostat.heating) + '", "modifier": ' + str(thermostat.getCurr_required_temp_modifier()) + ''"}')
 
 '''
 key : authentification key to access the API
@@ -70,7 +69,7 @@ def getPlanning(key):
                 tostring += "\"" + a
             tostring += "\""
         except :
-            print("[Serveur][getPlanning] Erreur : Lecture du fichier impossible (probablement une écriture simultanée)")
+            print "[Serveur][getPlanning] Erreur : Lecture du fichier impossible (probablement une écriture simultanée)"
         return jsonify('{"status": "success", "data": ' + tostring + '}')
     return jsonify('{"status": "error", "description": "Unable to get rules"}')
 
@@ -104,7 +103,7 @@ def setTemperatureRules(key):
         try:
             json.dump(request.json["rules"], outfile)
         except :
-            print("[Serveur][setTempratureRules] Erreur : Ecriture du fichier impossible")
+            print "[Serveur][setTempratureRules] Erreur : Ecriture du fichier impossible"
             return jsonify('{"status": "error", "description": "Internal error during the process, please try again later"}')
     return jsonify('{"status": "success"}')
 
@@ -134,6 +133,20 @@ def setWorking(key):
         return jsonify('{"status": "error", "description": "Field "working" missing"}')
     thermostat.setWorking(request.json["working"])
     return jsonify('{"status": "success"}')
+
+
+'''
+key : authentification key to access the API
+'''
+@app.route("/libelo/getNbBike/<string:key>", methods=['GET'])
+def getLibelo(key):
+    if not auth(key):
+        abort(401)
+    libelo = pybikes.get('libelo')
+    libelo.update()
+    nb_nikes = libelo.stations[20].bikes
+    free_room = libelo.stations[20].free
+    return jsonify('{"status": "success", "bikes": ' + str(nb_nikes) + ', "free": ' + str(free_room) + '}')
 
 
 ########################## SOME USEFUL FUNCTIONS ##########################
@@ -171,5 +184,5 @@ if __name__ == '__main__':
     regulateur = Regulateur(thermostat)
     regulateur.start()
     # Run the server
-    print("Server is running") #debug
+    print "Server is running" #debug
     app.run(host="0.0.0.0")
