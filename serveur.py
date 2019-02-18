@@ -50,7 +50,7 @@ def getState(key):
         abort(401)
     contenuFich = lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
     temperature = recupTemp (contenuFich)
-    return jsonify('{"status": "success", "temperature": ' + str(temperature) + ', "heating": "' + str(thermostat.heating) + '", "modifier": ' + str(thermostat.getCurr_required_temp_modifier()) + ''"}')
+    return jsonify('{"status": "success", "temperature": ' + str(temperature) + ', "heating": "' + str(thermostat.heating) + '", "modifier": ' + str(thermostat.getCurr_required_temp_modifier()) + '"}')
 
 '''
 key : authentification key to access the API
