@@ -8,6 +8,7 @@ import RPi.GPIO as GPIO
 from Thermostat import *
 from Regulateur import *
 import json
+import pybikes
 
 auth = HTTPBasicAuth()
 thermostat = Thermostat()
@@ -38,7 +39,19 @@ def getCurrentTemperature(key):
         abort(401)
     contenuFich = lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
     temperature = recupTemp (contenuFich)
-    return jsonify('{"status": "success", "temperature": ' + str(temperature) + ', "heating": "' + str(thermostat.heating) + '"}')
+    return jsonify('{"status": "success", "temperature": "' + str(temperature) + '"}')
+
+'''
+key : authentification key to access the API
+'''
+@app.route("/data/state/<string:key>", methods=['GET'])
+def getState(key):
+    if not auth(key):
+        abort(401)
+    contenuFich = lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
+    temperature = recupTemp (contenuFich)
+    return jsonify('{"status": "success", "temperature": ' + str(temperature) + ', "heating": "' + str(thermostat.heating) + 
+        '", "modifier": ' + str(thermostat.getCurr_required_temp_modifier()) +  "}')
 
 '''
 key : authentification key to access the API
@@ -95,18 +108,18 @@ def setTemperatureRules(key):
             return jsonify('{"status": "error", "description": "Internal error during the process, please try again later"}')
     return jsonify('{"status": "success"}')
 
+
 '''
-TODO: not working yet /!\
 key : authentification key to access the API
-PUT - temperature : temperature to set
+PUT - integer - value to set modifier
 '''
-@app.route("/manage/currentTemperature/<string:key>", methods=['PUT'])
-def setCurrentTemperature(key):
+@app.route("/manage/setModifier/<string:key>", methods=['PUT'])
+def setModifier(key):
     if not auth(key):
         abort(401)
-    elif not "temperature" in request.json:
-        return jsonify('{"status": "error", "description": "Field "temperature" missing"}')
-    #TODO
+    elif not "value" in request.json:
+        return jsonify('{"status": "error", "description": "Field "value" missing"}')
+    thermostat.setRequired_temp_modifier(request.json["value"])
     return jsonify('{"status": "success"}')
 
 '''
@@ -122,6 +135,19 @@ def setWorking(key):
     thermostat.setWorking(request.json["working"])
     return jsonify('{"status": "success"}')
 
+
+'''
+key : authentification key to access the API
+'''
+@app.route("/libelo/getNbBike/<string:key>", methods=['GET'])
+def getLibelo(key):
+    if not auth(key):
+        abort(401)
+    libelo = pybikes.get('libelo')
+    libelo.update()
+    nb_nikes = libelo.stations[20].bikes
+    free_room = libelo.stations[20].free
+    return jsonify('{"status": "success", "bikes": ' + str(nb_nikes) + ', "free": ' + str(free_room) + '}')
 
 
 ########################## SOME USEFUL FUNCTIONS ##########################

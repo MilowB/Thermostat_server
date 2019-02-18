@@ -15,6 +15,8 @@ class Thermostat():
         self._upper = False
         self._goal = 22.0
         self._temperature = 21.5
+        self._required_temp_modifier = 0
+        self._curr_required_temp_modifier = 0
         self._csv_data = []
 
     ########################## PUBLIC METHODS ##########################
@@ -31,10 +33,16 @@ class Thermostat():
     def getWorking(self):
         return self._on
 
+    def setRequired_temp_modifier(self, value):
+        self._required_temp_modifier += value
+
+    def getCurr_required_temp_modifier(self):
+        return self._curr_required_temp_modifier
+
     def needHeating(self):
         res = False
         if self._on:
-            temp_required = self._getRequireTemp()
+            temp_required = self._getRequiredTemp()
             if self._temperature > temp_required:
                 self._upper = True
             if self._temperature < temp_required and not self._upper:
@@ -64,7 +72,7 @@ class Thermostat():
             
     ########################## PRIVATE METHODS ##########################
 
-    def _getRequireTemp(self):
+    def _getRequiredTemp(self):
         locale.setlocale(locale.LC_TIME,'')
         day = time.strftime('%A')
         hour = self._getHour()
@@ -84,7 +92,8 @@ class Thermostat():
                         break
             else:
                 print("[Thermostat][behave] Error, day not found")
-        return tempToSet
+        self._curr_required_temp_modifier = (tempToSet + self._required_temp_modifier) - self._temperature
+        return tempToSet + self._curr_required_temp_modifier
 
     def _lireFichier(self, emplacement) :
         # Ouverture du fichier contenant la _temperature
