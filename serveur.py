@@ -136,20 +136,6 @@ def setWorking(key):
     return jsonify('{"status": "success"}')
 
 
-'''
-key : authentification key to access the API
-'''
-@app.route("/libelo/getNbBike/<string:key>", methods=['GET'])
-def getLibelo(key):
-    if not auth(key):
-        abort(401)
-    libelo = pybikes.get('libelo')
-    libelo.update()
-    nb_nikes = libelo.stations[20].bikes
-    free_room = libelo.stations[20].free
-    return jsonify('{"status": "success", "bikes": ' + str(nb_nikes) + ', "free": ' + str(free_room) + '}')
-
-
 ########################## SOME USEFUL FUNCTIONS ##########################
 
 def auth(key):
