@@ -15,6 +15,7 @@ class Thermostat():
         self._upper = False
         self._goal = 22.0
         self._temperature = 21.5
+        self._required_temp = 21.5
         self._required_temp_modifier = 0
         self._curr_required_temp_modifier = 0
         self._csv_data = []
@@ -60,7 +61,7 @@ class Thermostat():
         # Update _temperature
         self._temperature = _temperature
         # Update data to write into the CSV  
-        exterior_temp = self._getExteriorTemp()
+        exterior_temp = self.getExteriorTemp()
         self._csv_data.append([self._getHour(), self._temperature, exterior_temp, self.heating])
 
     def saveData(self):
@@ -69,6 +70,24 @@ class Thermostat():
             for csv in self._csv_data:
                 outfile.write(str(csv[0]) + " " + str(csv[1]) + " " + str(csv[2]) + " " + str(csv[3]) + "\n")
         self._csv_data = []
+
+
+    def getExteriorTemp(self):
+        # Coordinates of Valence, FR
+        long = 4.89
+        lat = 44.93
+        # Get the API key from the config file
+        with open("config.txt") as f:
+            content = f.readlines()
+        content = [x.strip() for x in content]
+        api_key = content[1].split(" ")[1]
+        address = "http://api.openweathermap.org/data/2.5/weather?lat=" + str(lat) + "&lon=" + str(long) + "&appid=" + api_key
+        contents = urllib.request.urlopen(address).read()
+        my_json = contents.decode('utf8').replace("'", '"')
+        # Load the JSON to a Python list & dump it back out as formatted JSON
+        data = json.loads(my_json)
+        s = json.dumps(data, indent=4, sort_keys=True)
+        return data["main"]["temp"] - 273.15
             
     ########################## PRIVATE METHODS ##########################
 
@@ -92,6 +111,11 @@ class Thermostat():
                         break
             else:
                 print("[Thermostat][behave] Error, day not found")
+        # Si une nouvelle règle de température apparait, le modificateur de temp doit être réinitialisé
+        if tempToSet != self._required_temp:
+            self._required_temp_modifier = 0
+            self._curr_required_temp_modifier = 0
+        self._required_temp = tempToSet
         self._curr_required_temp_modifier = (tempToSet + self._required_temp_modifier) - self._temperature
         return tempToSet + self._curr_required_temp_modifier
 
@@ -119,23 +143,3 @@ class Thermostat():
         minute = time.strftime('%M')
         hour = int(hour) + int(minute) / 100
         return hour
-
-    def _getExteriorTemp(self):
-        # Coordinates of Valence, FR
-        long = 4.89
-        lat = 44.93
-        # Get the API key from the config file
-        with open("config.txt") as f:
-            content = f.readlines()
-        content = [x.strip() for x in content]
-        api_key = content[1].split(" ")[1]
-        address = "http://api.openweathermap.org/data/2.5/weather?lat=" + str(lat) + "&lon=" + str(long) + "&appid=" + api_key
-        contents = urllib.request.urlopen(address).read()
-        my_json = contents.decode('utf8').replace("'", '"')
-        # Load the JSON to a Python list & dump it back out as formatted JSON
-        data = json.loads(my_json)
-        s = json.dumps(data, indent=4, sort_keys=True)
-        return data["main"]["temp"] - 273.15
-
-
-
