@@ -117,6 +117,8 @@ class Thermostat():
             self._curr_required_temp_modifier = 0
         self._required_temp = tempToSet
         self._curr_required_temp_modifier = (tempToSet + self._required_temp_modifier) - self._temperature
+        if abs(self._curr_required_temp_modifier) > abs(self._required_temp_modifier):
+            self._curr_required_temp_modifier = self._required_temp_modifier
         return tempToSet + self._curr_required_temp_modifier
 
     def _lireFichier(self, emplacement) :
