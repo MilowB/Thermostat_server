@@ -119,7 +119,7 @@ def setModifier(key):
     elif not "value" in request.json:
         return jsonify('{"status": "error", "description": "Field "value" missing"}')
     thermostat.setRequired_temp_modifier(request.json["value"])
-    return jsonify('{"status": "success"}')
+    return jsonify('{"status": "success", "modifier": ' + str(thermostat.getCurr_required_temp_modifier() + '}')
 
 '''
 key : authentification key to access the API
