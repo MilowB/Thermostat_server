@@ -107,20 +107,6 @@ def setTemperatureRules(key):
             return jsonify('{"status": "error", "description": "Internal error during the process, please try again later"}')
     return jsonify('{"status": "success"}')
 
-
-'''
-key : authentification key to access the API
-PUT - integer - value to set modifier
-'''
-@app.route("/manage/setModifier/<string:key>", methods=['PUT'])
-def setModifier(key):
-    if not auth(key):
-        abort(401)
-    elif not "value" in request.json:
-        return jsonify('{"status": "error", "description": "Field "value" missing"}')
-    thermostat.setRequired_temp_modifier(request.json["value"])
-    return jsonify('{"status": "success", "modifier": ' + str(thermostat.getCurr_required_temp_modifier() + '}')
-
 '''
 key : authentification key to access the API
 PUT - working : activate or desactivate the thermostat
@@ -134,6 +120,18 @@ def setWorking(key):
     thermostat.setWorking(request.json["working"])
     return jsonify('{"status": "success"}')
 
+'''
+key : authentification key to access the API
+PUT - integer - value to set modifier
+'''
+@app.route("/manage/setModifier/<string:key>", methods=['PUT'])
+def setModifier(key):
+    if not auth(key):
+        abort(401)
+    elif not "value" in request.json:
+        return jsonify('{"status": "error", "description": "Field "value" missing"}')
+    thermostat.setRequired_temp_modifier(request.json["value"])
+    return jsonify('{"status": "success", "modifier": ' + str(thermostat.getCurr_required_temp_modifier() + '}')
 
 ########################## SOME USEFUL FUNCTIONS ##########################
 
