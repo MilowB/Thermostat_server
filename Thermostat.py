@@ -36,6 +36,8 @@ class Thermostat():
 
     def setRequired_temp_modifier(self, value):
         self._required_temp_modifier += value
+        if self._curr_required_temp_modifier == 0:
+            self._curr_required_temp_modifier = self._required_temp_modifier
 
     def getCurr_required_temp_modifier(self):
         return self._curr_required_temp_modifier
