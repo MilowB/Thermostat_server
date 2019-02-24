@@ -34,9 +34,11 @@ class Thermostat():
     def getWorking(self):
         return self._on
 
+    def getRequiredTemp(self):
+        return self._required_temp
+
     def setRequired_temp_modifier(self, value):
         self._required_temp_modifier += value
-        print("self._required_temp_modifier : ", self._required_temp_modifier) #@debug
         if self._curr_required_temp_modifier == 0:
             self._curr_required_temp_modifier = self._required_temp_modifier
         self._curr_required_temp_modifier = (self._required_temp + self._required_temp_modifier) - self._temperature
