@@ -41,9 +41,7 @@ class Thermostat():
         self._required_temp_modifier += value
         if self._curr_required_temp_modifier == 0:
             self._curr_required_temp_modifier = self._required_temp_modifier
-        self._curr_required_temp_modifier = (self._required_temp + self._required_temp_modifier) - self._temperature
-        if abs(self._curr_required_temp_modifier) > abs(self._required_temp_modifier):
-            self._curr_required_temp_modifier = self._required_temp_modifier
+        self.updateData()
 
     def getCurr_required_temp_modifier(self):
         return self._curr_required_temp_modifier
@@ -62,6 +60,11 @@ class Thermostat():
                 res = True
                 self._upper = False
         return res
+
+    def update(self):
+        self._curr_required_temp_modifier = (self._required_temp + self._required_temp_modifier) - self._temperature
+        if abs(self._curr_required_temp_modifier) > abs(self._required_temp_modifier):
+            self._curr_required_temp_modifier = self._required_temp_modifier
 
     def updateData(self):
         contenuFich = self._lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
