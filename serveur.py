@@ -50,7 +50,6 @@ def getAllDatas(key):
         abort(401)
     contenuFich = lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
     temperature = recupTemp (contenuFich)
-    thermostat.update()
     return jsonify('{"status": "success", "temperature": ' + str(temperature) + ', "exterior": ' +  str(thermostat.getExteriorTemp()) + 
         ', "required": ' + str(thermostat.getRequiredTemp()) +  ', "heating": "' + str(thermostat.heating) + 
         '", "modifier": ' + str(thermostat.getCurr_required_temp_modifier()) + '}')
