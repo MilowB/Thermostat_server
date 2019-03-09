@@ -3,6 +3,7 @@ import locale
 import time
 import json
 import urllib.request
+from Modifier import *
 
 # Thermostat is the temperature regulator interacting with the API
 class Thermostat():
@@ -16,8 +17,7 @@ class Thermostat():
         self._goal = 22.0
         self._temperature = 21.5
         self._required_temp = 21.5
-        self._required_temp_modifier = 0
-        self._curr_required_temp_modifier = 0
+        self._modifier = Modifier()
         self._csv_data = []
 
     ########################## PUBLIC METHODS ##########################
@@ -38,13 +38,12 @@ class Thermostat():
         return self._required_temp
 
     def setRequired_temp_modifier(self, value):
-        self._required_temp_modifier += value
-        if self._curr_required_temp_modifier == 0:
-            self._curr_required_temp_modifier = self._required_temp_modifier
+        self._modifier.updateObjective(self._required_temp)
+        self._modifier.update()
         self.update()
 
     def getCurr_required_temp_modifier(self):
-        return self._curr_required_temp_modifier
+        return self._modifier.getValue()
 
     def needHeating(self):
         res = False
@@ -61,14 +60,8 @@ class Thermostat():
                 self._upper = False
         return res
 
-    def update(self):
-        self._curr_required_temp_modifier = (self._required_temp + self._required_temp_modifier) - self._temperature
-        if abs(self._curr_required_temp_modifier) > abs(self._required_temp_modifier):
-            self._curr_required_temp_modifier = self._required_temp_modifier
-
     def updateData(self):
-        contenuFich = self._lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
-        _temperature = self._recupTemp(contenuFich)
+        _temperature = self._getTemperature()
         # Update _temperature
         self._temperature = _temperature
         # Update data to write into the CSV  
@@ -127,10 +120,9 @@ class Thermostat():
             self._required_temp_modifier = 0
             self._curr_required_temp_modifier = 0
         self._required_temp = tempToSet
-        self._curr_required_temp_modifier = (self._required_temp + self._required_temp_modifier) - self._temperature
-        if abs(self._curr_required_temp_modifier) > abs(self._required_temp_modifier):
-            self._curr_required_temp_modifier = self._required_temp_modifier
-        return tempToSet + self._curr_required_temp_modifier
+        self._modifier.setObjective(tempToSet)
+        self._modifier.update(self._getTemperature())
+        return tempToSet + self._modifier.getValue()
 
     def _lireFichier(self, emplacement) :
         # Ouverture du fichier contenant la _temperature
@@ -156,3 +148,7 @@ class Thermostat():
         minute = time.strftime('%M')
         hour = int(hour) + int(minute) / 100
         return hour
+
+    def _getTemperature(self):
+        contenuFich = self._lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
+        return self._recupTemp(contenuFich)
