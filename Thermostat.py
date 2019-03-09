@@ -38,7 +38,7 @@ class Thermostat():
         return self._required_temp
 
     def setRequired_temp_modifier(self, value):
-        self._modifier.updateObjective(self._required_temp)
+        self._modifier.updateObjective(value)
         self._modifier.update(self._getTemperature())
 
     def getCurr_required_temp_modifier(self):
