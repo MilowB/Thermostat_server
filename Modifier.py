@@ -1,4 +1,4 @@
-class Modifier(self):
+class Modifier():
 
     def __init__(self):
         self._incremental_objective = 0
