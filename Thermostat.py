@@ -5,7 +5,7 @@ import json
 import urllib.request
 from Modifier import *
 
-# Thermostat is the temperature regulator interacting with the API
+# Thermostat is the temperature regulator class interacting with the API
 class Thermostat():
 
     def __init__(self):
@@ -38,10 +38,11 @@ class Thermostat():
         return self._required_temp
 
     def setRequired_temp_modifier(self, value):
-        self._modifier.updateObjective(value)
+        self._modifier.updateObjective(value, self._temperature)
         self._modifier.update(self._getTemperature())
 
     def getCurr_required_temp_modifier(self):
+        self._modifier.update(self._getTemperature())
         return self._modifier.getValue()
 
     def needHeating(self):
