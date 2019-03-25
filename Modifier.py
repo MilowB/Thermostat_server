@@ -21,12 +21,14 @@ class Modifier():
         if self._active:
             self._value = self._objective - current_temp
             print("[Modifier][update] Valeur du modifier : ", self._value) # @debug
-            if self._objective > self._original_temp and self._value < 0:
+            if current_temp > self._original_temp and self._value < 0:
                 self._active = False
                 self._incremental_objective = 0
-            elif self._objective < self._original_temp and self._value > 0:
+                self._value = 0
+            elif current_temp < self._original_temp and self._value > 0:
                 self._active = False
                 self._incremental_objective = 0
+                self._value = 0
 
     def getValue(self):
         val = 0
