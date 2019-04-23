@@ -101,20 +101,23 @@ class Thermostat():
         hour = self._getHour()
         tempToSet = 0
         #read rules
-        with open('rules.json', 'r') as outfile:
-            jsonread = json.load(outfile)
-            argHour = 0
-            if day in jsonread:
-                rule = jsonread[day]["data"]
-                #read hour
-                for r in rule:
-                    if hour >= r["hour"]:
-                        tempToSet = r["temperature"]
-                        argHour = r["hour"]
-                    else:
-                        break
-            else:
-                print("[Thermostat][behave] Error, day not found")
+        try:
+            with open('rules.json', 'r') as outfile:
+                jsonread = json.load(outfile)
+                argHour = 0
+                if day in jsonread:
+                    rule = jsonread[day]["data"]
+                    #read hour
+                    for r in rule:
+                        if hour >= r["hour"]:
+                            tempToSet = r["temperature"]
+                            argHour = r["hour"]
+                        else:
+                            break
+                else:
+                    print("[Thermostat][behave] Error, day not found")
+        except:
+            print("[Thermostat][_getRequiredTemp()] Erreur de lecture de rules.json")
         # Si une nouvelle règle de température apparait, le modificateur de temp doit être réinitialisé
         if tempToSet != self._required_temp:
             self._required_temp_modifier = 0
