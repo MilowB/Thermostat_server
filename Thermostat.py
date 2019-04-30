@@ -4,11 +4,13 @@ import time
 import json
 import urllib.request
 from Modifier import *
+import logging
 
 # Thermostat is the temperature regulator class interacting with the API
 class Thermostat():
 
     def __init__(self):
+        logging.basicConfig(filename='thermostat.log',level=logging.CRITICAL)
         ## public attribute ##
         self.heating = False
         ## private attributes ##
@@ -99,7 +101,7 @@ class Thermostat():
         locale.setlocale(locale.LC_TIME,'')
         day = time.strftime('%A')
         hour = self._getHour()
-        tempToSet = 0
+        tempToSet = -1
         #read rules
         try:
             with open('rules.json', 'r') as outfile:
@@ -115,9 +117,9 @@ class Thermostat():
                         else:
                             break
                 else:
-                    print("[Thermostat][behave] Error, day not found")
+                    logging.warning('[_getRequiredTemp()] Erreur, jour introuvable')
         except:
-            print("[Thermostat][_getRequiredTemp()] Erreur de lecture de rules.json")
+            logging.warning('[_getRequiredTemp()] Erreur de lecture de rules.json')
         # Si une nouvelle règle de température apparait, le modificateur de temp doit être réinitialisé
         if tempToSet != self._required_temp:
             self._required_temp_modifier = 0
