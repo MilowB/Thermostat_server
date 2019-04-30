@@ -3,14 +3,14 @@ import locale
 import time
 import json
 import urllib.request
-from Modifier import *
 import logging
+from Modifier import *
 
 # Thermostat is the temperature regulator class interacting with the API
 class Thermostat():
 
     def __init__(self):
-        logging.basicConfig(filename='thermostat.log',level=logging.CRITICAL)
+        logging.basicConfig(filename='thermostat.log',level=logging.DEBUG)
         ## public attribute ##
         self.heating = False
         ## private attributes ##
