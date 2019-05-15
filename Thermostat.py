@@ -86,13 +86,19 @@ class Thermostat():
         content = [x.strip() for x in content]
         api_key = content[1].split(" ")[1]
         address = "http://api.openweathermap.org/data/2.5/weather?lat=" + str(lat) + "&lon=" + str(long) + "&appid=" + api_key
-        contents = urllib.request.urlopen(address).read()
-        my_json = contents.decode('utf8').replace("'", '"')
-        # Load the JSON to a Python list & dump it back out as formatted JSON
-        data = json.loads(my_json)
-        s = json.dumps(data, indent=4, sort_keys=True)
-        return data["main"]["temp"] - 273.15
-            
+        contents = None
+        try:
+            contents = urllib.request.urlopen(address).read()
+        except:
+            print("[Thermostat][getExteriorTemp] Erreur : Le endpoint openweathermap ne repond pas !") #@debug
+        if contents != None:
+            my_json = contents.decode('utf8').replace("'", '"')
+            # Load the JSON to a Python list & dump it back out as formatted JSON
+            data = json.loads(my_json)
+            #s = json.dumps(data, indent=4, sort_keys=True) # to see if it's really useless or not (I bet it is)
+            return data["main"]["temp"] - 273.15
+        return contents
+
     ########################## PRIVATE METHODS ##########################
 
     def _getRequiredTemp(self):
