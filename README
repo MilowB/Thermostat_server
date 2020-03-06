@@ -1,8 +1,8 @@
 What is it ?
 ------------
 
-Who has never dream to manage himself his heating system ? Right, the most of people...
-This repository is the server side of a heating system management. It is composed with a RESTful API build with Flask. The API allows to get the current temperature, shutdown or launch the heating system and schedule hour by hour every day of the week the temperature of your home.
+Who has never dreamed to manage himself his heating system ? Right, most of people...
+This repository is the server side of a heating system management. It is composed by a RESTful API build with Flask. The API allows to get the current temperature, shutdown or launch the heating system and schedule hour by hour every day of the week the temperature of your home.
 
 How to run ?
 ------------
@@ -21,10 +21,6 @@ Is it working ?
 Yes, you can download this repo and run the server on your machine.
 Also, you should notice it is not the final version.
 
-Where is the documentation ?
-----------------------------
-
-Actually... In my mind... sorry, it is coming soon :)
 
 
 
