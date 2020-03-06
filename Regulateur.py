@@ -3,9 +3,6 @@ import RPi.GPIO as GPIO
 import time
 
 class Regulateur(Thread):
-
-    """Thread chargé simplement d'afficher une lettre dans la console."""
-
     def __init__(self, thermostat):
         Thread.__init__(self)
         self.thermostat = thermostat
@@ -23,7 +20,7 @@ class Regulateur(Thread):
             else:
                 GPIO.setup(17, GPIO.OUT, initial=GPIO.HIGH)
                 self.thermostat.heating = False
-            # Would be better to the SD card to check every 5 * 60 seconds
+            # Would be better for the SD card to check every 5 * 60 seconds
             time.sleep(time_sleep)
             # Write data every hours to prevent the degradation of the SD card
             if cpt % 12 == 0:

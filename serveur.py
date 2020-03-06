@@ -8,7 +8,6 @@ import RPi.GPIO as GPIO
 from Thermostat import *
 from Regulateur import *
 import json
-import pybikes
 
 auth = HTTPBasicAuth()
 thermostat = Thermostat()
@@ -50,9 +49,13 @@ def getAllDatas(key):
         abort(401)
     contenuFich = lireFichier("/sys/bus/w1/devices/28-04178033e5ff/w1_slave")
     temperature = recupTemp (contenuFich)
-    return jsonify('{"status": "success", "temperature": ' + str(temperature) + ', "exterior": ' +  str(thermostat.getExteriorTemp()) + 
-        ', "required": ' + str(thermostat.getRequiredTemp()) +  ', "heating": "' + str(thermostat.heating) + 
-        '", "modifier": ' + str(thermostat.getCurr_required_temp_modifier()) + '}')
+    return jsonify('{"status": "success", "temperature": ' + str(temperature) + 
+        ', "exterior": ' + str(thermostat.getExteriorTemp()) + 
+        ', "required": ' + str(thermostat.getRequiredTemp()) +  
+        ', "heating": "' + str(thermostat.heating) +
+        '", "modifier": ' + str(thermostat.getCurr_required_temp_modifier()) + 
+        ', "working": "' + str(thermostat.getWorking()) +
+        '}')
 
 '''
 key : authentification key to access the API
@@ -140,28 +143,28 @@ def setModifier(key):
 def auth(key):
     with open("config.txt") as f:
         content = f.readlines()
-    # you may also want to remove whitespace characters like `\n` at the end of each line
+    # Remove whitespace characters like `\n` at the end of each line
     content = [x.strip() for x in content]
     if content[0].split(" ")[1] == key:
         return True
     return False
 
 def lireFichier (emplacement) :
-    # Ouverture du fichier contenant la temperature
+    # Open the temperature file
     fichTemp = open(emplacement)
-    # Lecture du fichier
+    # Read the file
     contenu = fichTemp.read()
-    # Fermeture du fichier apres qu'il ai ete lu
+    # Close file after reading
     fichTemp.close()
     return contenu
 
 def recupTemp (contenuFich) :
-    # Supprimer la premiere ligne qui est inutile
+    # Remove the first line (useless)
     secondeLigne = contenuFich.split("\n")[1]
     temperatureData = secondeLigne.split(" ")[9]
-    # Supprimer le "t="
+    # Remove "t="
     temperature = float(temperatureData[2:])
-    # Mettre un chiffre apres la virgule
+    # Keep only one number after the dot
     temperature = temperature / 1000
     return temperature
 

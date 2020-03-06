@@ -19,8 +19,19 @@ class Thermostat():
         self._goal = 22.0
         self._temperature = 21.5
         self._required_temp = 21.5
+        self._exterior_temp = 0
         self._modifier = Modifier()
         self._csv_data = []
+        self._x = 6.40
+        self._y = 6.40
+        self._z = 2.50
+        self._volume = x * y * z
+        self._masse_vol_air = 1.225
+        self._masse_air = self.volume * self.masse_vol_air
+        self._capacite_cal_air = 1004
+        #En Watt
+        self.watt_chauffage = 1500
+        self.perte_isolation = 1100
 
     ########################## PUBLIC METHODS ##########################
 
@@ -98,10 +109,24 @@ class Thermostat():
             # Load the JSON to a Python list & dump it back out as formatted JSON
             data = json.loads(my_json)
             #s = json.dumps(data, indent=4, sort_keys=True) # to see if it's really useless or not (I bet it is)
+            self._exterior_temp = data["main"]["temp"] - 273.15
             return data["main"]["temp"] - 273.15
+        self._exterior_temp = contents
         return contents
 
     ########################## PRIVATE METHODS ##########################
+
+    # Time in minute to heat the appartment
+    def timeNeededToHeat(self):
+        ext = self._exterior_temp
+        inte = self._getTemperature()
+        self.perte_isolation += 15 * (inte - ext)
+        requis = self._getRequiredTemp()
+        # Energy in Kj, 1 kj = 0.277778 Wh
+        energy = self.masse_air * self.capacite_cal_air * (requis - inte)
+        # Time in seconde
+        time = energy / (self.heating - self.perte_isolation)
+        return time / 60
 
     def _getRequiredTemp(self):
         locale.setlocale(locale.LC_TIME,'')
