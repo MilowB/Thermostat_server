@@ -55,7 +55,7 @@ def getAllDatas(key):
         ', "heating": "' + str(thermostat.heating) +
         '", "modifier": ' + str(thermostat.getCurr_required_temp_modifier()) + 
         ', "working": "' + str(thermostat.getWorking()) +
-        '}')
+        '"}')
 
 '''
 key : authentification key to access the API

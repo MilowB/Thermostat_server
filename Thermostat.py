@@ -117,9 +117,10 @@ class Thermostat():
 
     # Time in minute to heat the appartment
     def _timeNeededToHeat(self, required):
-        print("[_timeNeededToHeat]")
         ext = self._exterior_temp
         inte = self._getTemperature()
+        # Isolation decreasing depending on the exterior temperature
+        # 15 is an empiric value to change if necessary
         self.perte_isolation += 15 * (inte - ext)
         # Energy in Kj, 1 kj = 0.277778 Wh
         energy = self.masse_air * self.capacite_cal_air * (required - inte)
@@ -128,7 +129,6 @@ class Thermostat():
         return time / 60
 
     def _anticipateHeating(self):
-        print("[_anticipateHeating]")
         heat = False
         #read rules
         day = time.strftime('%A')
