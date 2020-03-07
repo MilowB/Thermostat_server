@@ -25,7 +25,7 @@ class Thermostat():
         self._x = 6.40
         self._y = 6.40
         self._z = 2.50
-        self._volume = x * y * z
+        self._volume = self._x * self._y * self._z
         self._masse_vol_air = 1.225
         self._masse_air = self.volume * self.masse_vol_air
         self._capacite_cal_air = 1004
