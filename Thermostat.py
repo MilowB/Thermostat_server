@@ -27,7 +27,7 @@ class Thermostat():
         self._z = 2.50
         self._volume = self._x * self._y * self._z
         self._masse_vol_air = 1.225
-        self._masse_air = self.volume * self.masse_vol_air
+        self._masse_air = self._volume * self.masse_vol_air
         self._capacite_cal_air = 1004
         #En Watt
         self.watt_chauffage = 1500
