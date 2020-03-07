@@ -64,7 +64,7 @@ class Thermostat():
             temp_required = self._getRequiredTemp()
             if self._temperature > temp_required:
                 self._upper = True
-            if self._temperature < temp_required and not self._upper:
+            if self._temperature < temp_required or self._anticipateHeating() and not self._upper:
                 res = True
             elif self._temperature >= temp_required - 0.5 and self._temperature < temp_required and self._upper:
                 res = False
@@ -87,7 +87,6 @@ class Thermostat():
             for csv in self._csv_data:
                 outfile.write(str(csv[0]) + " " + str(csv[1]) + " " + str(csv[2]) + " " + str(csv[3]) + "\n")
         self._csv_data = []
-
 
     def getExteriorTemp(self):
         # Coordinates of Valence, FR
@@ -117,16 +116,48 @@ class Thermostat():
     ########################## PRIVATE METHODS ##########################
 
     # Time in minute to heat the appartment
-    def timeNeededToHeat(self):
+    def _timeNeededToHeat(self, required):
         ext = self._exterior_temp
         inte = self._getTemperature()
         self.perte_isolation += 15 * (inte - ext)
-        requis = self._getRequiredTemp()
         # Energy in Kj, 1 kj = 0.277778 Wh
-        energy = self.masse_air * self.capacite_cal_air * (requis - inte)
+        energy = self.masse_air * self.capacite_cal_air * (required - inte)
         # Time in seconde
         time = energy / (self.heating - self.perte_isolation)
         return time / 60
+
+    def _anticipateHeating(self):
+        heat = False
+        #read rules
+        day = time.strftime('%A')
+        hour = self._getHour()
+        try:
+            with open('rules.json', 'r') as outfile:
+                jsonread = json.load(outfile)
+                if day in jsonread:
+                    rule = jsonread[day]["data"]
+                    #read hour
+                    for r in rule:
+                        if hour <= r["hour"]:
+                            tempToSet = r["temperature"]
+                            time_to_heat = self._timeNeededToHeat(tempToSet)
+                            # Convert it in hour (e.g. 100mn = 1.40h)
+                            time_to_heat = (time_to_heat % 60) / 100 + int(time_to_heat / 60)
+                            time_soustracted = hour_soustraction(r["hour"], time_to_heat)
+                            if time_soustracted <= float(hour):
+                                heat = True
+                else:
+                    logging.warning('[_getRequiredTemp()] Erreur, jour introuvable')
+        except:
+            logging.warning('[_getRequiredTemp()] Erreur de lecture de rules.json')
+        return heat
+
+    def _hour_soustraction(self, h1, h2):
+        t = float(h1) - float(h2)
+        t -= int(t)
+        reste = 1 - t
+        completude = 0.60 - reste
+        return int(float(h1) - float(h2)) + completude
 
     def _getRequiredTemp(self):
         locale.setlocale(locale.LC_TIME,'')
@@ -137,14 +168,12 @@ class Thermostat():
         try:
             with open('rules.json', 'r') as outfile:
                 jsonread = json.load(outfile)
-                argHour = 0
                 if day in jsonread:
                     rule = jsonread[day]["data"]
                     #read hour
                     for r in rule:
                         if hour >= r["hour"]:
                             tempToSet = r["temperature"]
-                            argHour = r["hour"]
                         else:
                             break
                 else:
