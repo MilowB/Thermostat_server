@@ -59,6 +59,7 @@ class Thermostat():
         return self._modifier.getValue()
 
     def needHeating(self):
+        self._temperature = self._getTemperature()
         res = False
         if self._on:
             temp_required = self._getRequiredTemp()
@@ -74,12 +75,11 @@ class Thermostat():
         return res
 
     def updateData(self):
-        _temperature = self._getTemperature()
         # Update _temperature
-        self._temperature = _temperature
+        self._temperature = self._getTemperature()
         # Update data to write into the CSV  
         exterior_temp = self.getExteriorTemp()
-        self._csv_data.append([self._getHour(), self._temperature, exterior_temp, self.heating])
+        #self._csv_data.append([self._getHour(), self._temperature, exterior_temp, self.heating])
 
     def saveData(self):
         # Save data for history
