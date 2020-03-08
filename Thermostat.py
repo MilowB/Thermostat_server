@@ -64,11 +64,11 @@ class Thermostat():
             temp_required = self._getRequiredTemp()
             if self._temperature > temp_required:
                 self._upper = True
-            if self._temperature < temp_required or self._anticipateHeating() and not self._upper:
+            if (self._temperature < temp_required or self._anticipateHeating()) and not self._upper:
                 res = True
-            elif self._temperature >= temp_required - 0.5 and self._temperature < temp_required and self._upper:
-                res = False
-            elif self._temperature < temp_required - 0.5:
+            #elif self._temperature >= temp_required - 0.5 and self._temperature < temp_required and self._upper:
+            #    res = False
+            elif self._temperature < temp_required - 0.5 and self._upper:
                 res = True
                 self._upper = False
         return res
