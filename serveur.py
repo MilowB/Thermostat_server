@@ -11,9 +11,9 @@ import json
 
 auth = HTTPBasicAuth()
 thermostat = Thermostat()
+regulateur = Regulateur(thermostat)
 
 app = Flask(__name__)
-regulateur = Regulateur(thermostat)
 
 ########################## API ENDPOINTS ##########################
 
@@ -111,7 +111,7 @@ def setTemperatureRules(key):
         except :
             print("[Serveur][setTempratureRules] Erreur : Ecriture du fichier impossible")
             return jsonify('{"status": "error", "description": "Internal error during the process, please try again later"}')
-    regulateur.update()
+    #regulateur.update()
     return jsonify('{"status": "success"}')
 
 '''
@@ -125,7 +125,7 @@ def setWorking(key):
     elif not "working" in request.json:
         return jsonify('{"status": "error", "description": "Field "working" missing"}')
     thermostat.setWorking(request.json["working"])
-    regulateur.update()
+    #regulateur.update()
     return jsonify('{"status": "success"}')
 
 '''
@@ -139,7 +139,7 @@ def setModifier(key):
     elif not "value" in request.json:
         return jsonify('{"status": "error", "description": "Field "value" missing"}')
     thermostat.setRequired_temp_modifier(request.json["value"])
-    regulateur.update()
+    #regulateur.update()
     return jsonify('{"status": "success", "modifier": ' + str(thermostat.getCurr_required_temp_modifier()) + '}')
 
 ########################## SOME USEFUL FUNCTIONS ##########################
@@ -174,9 +174,7 @@ def recupTemp (contenuFich) :
 
 if __name__ == '__main__':
     # Run the regulator
-    
-    #regulateur.start()
-    # Run the server
     regulateur.run()
+    # Run the server
     print("Server is running") #debug
     app.run(host="0.0.0.0")
