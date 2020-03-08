@@ -177,5 +177,6 @@ if __name__ == '__main__':
     
     #regulateur.start()
     # Run the server
+    regulateur.run()
     print("Server is running") #debug
     app.run(host="0.0.0.0")

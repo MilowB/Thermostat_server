@@ -10,8 +10,6 @@ class Regulateur(Thread):
         GPIO.setmode(GPIO.BCM)
 
     def update(self):
-        #time_sleep = 4 * 60
-        #while True:
         self.thermostat.updateData()
         if self.thermostat.needHeating():
             GPIO.setup(17, GPIO.OUT, initial=GPIO.LOW)
@@ -19,9 +17,9 @@ class Regulateur(Thread):
         else:
             GPIO.setup(17, GPIO.OUT, initial=GPIO.HIGH)
             self.thermostat.heating = False
-            # Would be better for the SD card to check every 5 * 60 seconds
-            #time.sleep(time_sleep)
-            # Write data every hours to prevent the degradation of the SD card
-            #if cpt % 12 == 0:
-            #    self.thermostat.saveData()
-            #cpt += 1
+
+    def run(self):
+        time_sleep = 5 * 60
+        while True:
+            self.update()
+            time.sleep(time_sleep)
